@@ -43,6 +43,20 @@ export function getAllProgress(): CardProgress[] {
   return Array.from(store.values())
 }
 
+export function getLearnedCount(cardIds: string[]): number {
+  return cardIds.filter(id => getProgress(id).repetitions >= 1).length
+}
+
+export function isCardDue(cardId: string): boolean {
+  return isDue(getProgress(cardId))
+}
+
+export function getNextReviewTime(cardIds: string[]): number | null {
+  const learned = cardIds.filter(id => getProgress(id).repetitions >= 1)
+  if (learned.length === 0) return null
+  return Math.min(...learned.map(id => getProgress(id).nextReview))
+}
+
 export function getStats(allCardIds: string[]): {
   learned: number
   mastered: number
