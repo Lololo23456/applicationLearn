@@ -327,7 +327,7 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "Structure de l'iḍāfa",
         explanation: "Pour dire 'le X de Y', on place les deux noms directement l'un après l'autre. Le premier nom (المضاف) perd son article. Le second (المضاف إليه) prend la kasra (i) du génitif. Pas de préposition 'de' !",
         examples: [
-          { arabic: 'كِتَابُ الطَّالِبِ', transliteration: 'kitābu ṭ-ṭālibi', french: 'le livre de l'étudiant' },
+          { arabic: 'كِتَابُ الطَّالِبِ', transliteration: 'kitābu ṭ-ṭālibi', french: "le livre de l'étudiant" },
           { arabic: 'بَابُ البَيْتِ', transliteration: 'bābu l-bayti', french: 'la porte de la maison' },
         ],
       },
@@ -405,7 +405,7 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "Le cas génitif",
         explanation: "Après une préposition, le nom prend le cas génitif — marqué par la kasra (ِ) en finale. C'est le troisième cas de la déclinaison arabe. Exemple : في البَيْتِ (fī l-bayti) — le ِ final sur بَيْت.",
         examples: [
-          { arabic: 'مِنَ المَدْرَسَةِ', transliteration: 'mina l-madrasati', french: 'de l'école — madrasati au génitif' },
+          { arabic: 'مِنَ المَدْرَسَةِ', transliteration: 'mina l-madrasati', french: "de l'école — madrasati au génitif" },
         ],
       },
     ],
@@ -423,7 +423,7 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "Le système des racines",
         explanation: "La plus grande particularité de l'arabe : presque tous les mots dérivent d'une RACINE de 3 consonnes (parfois 4). Ces consonnes portent un sens fondamental. En faisant varier les voyelles et les préfixes/suffixes autour de cette racine, on crée des dizaines de mots liés sémantiquement.",
         examples: [
-          { arabic: 'ك-ت-ب', transliteration: 'k-t-b', french: 'idée d'écriture' },
+          { arabic: 'ك-ت-ب', transliteration: 'k-t-b', french: "idée d'écriture" },
           { arabic: 'كَتَبَ / كِتَاب / كَاتِب / مَكْتَبَة / مَكْتُوب', transliteration: 'kataba / kitāb / kātib / maktaba / maktūb', french: 'écrire / livre / écrivain / bibliothèque / lettre (écrite)' },
         ],
       },
@@ -462,14 +462,14 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "Le présent (المضارع) : préfixes + voyelles",
         explanation: "Au présent, la personne s'exprime par des PRÉFIXES : يَ (il/ils), تَ (tu/vous/elle), أَ (je), نَ (nous). La racine subit aussi des changements de voyelles internes selon le schème du verbe.",
         examples: [
-          { arabic: 'يَكْتُبُ / تَكْتُبُ / أَكْتُبُ / نَكْتُبُ', transliteration: 'yaktubu / taktubu / aktubu / naktubu', french: 'il écrit / tu écris / j'écris / nous écrivons' },
+          { arabic: 'يَكْتُبُ / تَكْتُبُ / أَكْتُبُ / نَكْتُبُ', transliteration: 'yaktubu / taktubu / aktubu / naktubu', french: "il écrit / tu écris / j'écris / nous écrivons" },
         ],
       },
       {
         title: "Les 3 modes du présent",
         explanation: "La voyelle finale du présent indique le mode grammatical. ُ (ḍamma) = indicatif (yaktub-u = il écrit). َ (fatḥa) = subjonctif (yaktub-a = qu'il écrive). ْ (sukūn) = apocopé/jussif (yaktub = qu'il écrive / négatif). Ce système est essentiel pour lire le Coran.",
         examples: [
-          { arabic: 'يَكْتُبُ / أَنْ يَكْتُبَ / لَمْ يَكْتُبْ', transliteration: 'yaktubu / an yaktuba / lam yaktub', french: 'il écrit / qu'il écrive / il n'a pas écrit' },
+          { arabic: 'يَكْتُبُ / أَنْ يَكْتُبَ / لَمْ يَكْتُبْ', transliteration: 'yaktubu / an yaktuba / lam yaktub', french: "il écrit / qu'il écrive / il n'a pas écrit" },
         ],
       },
     ],
@@ -559,7 +559,7 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "قَالَ : le verbe 'dire' en contexte coranique",
         explanation: "قَالَ est l'un des verbes les plus fréquents du Coran et de la littérature arabe. Il introduit les discours directs. Sa maîtrise est essentielle pour lire les textes classiques.",
         examples: [
-          { arabic: 'قَالَ اللّٰهُ تَعَالَى', transliteration: 'qāla llāhu taʿālā', french: 'Dieu Le Très-Haut dit... (formule d'introduction coranique)' },
+          { arabic: 'قَالَ اللّٰهُ تَعَالَى', transliteration: 'qāla llāhu taʿālā', french: "Dieu Le Très-Haut dit... (formule d'introduction coranique)" },
         ],
       },
     ],
@@ -615,7 +615,7 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         title: "أُرِيدُ أَنْ + subjonctif",
         explanation: "Pour exprimer le désir, on utilise أَرَادَ (vouloir, Forme IV) + أَنْ (que/de) + le verbe au subjonctif (mode apocopé). أَنْ est une particule de subordination qui déclenche le subjonctif.",
         examples: [
-          { arabic: 'أُرِيدُ أَنْ أَتَعَلَّمَ', transliteration: 'urīdu an ataʿallama', french: 'Je veux apprendre (litt. : je veux que j'apprenne)' },
+          { arabic: 'أُرِيدُ أَنْ أَتَعَلَّمَ', transliteration: 'urīdu an ataʿallama', french: "Je veux apprendre (litt. : je veux que j'apprenne)" },
           { arabic: 'يُرِيدُ أَنْ يَذْهَبَ', transliteration: 'yurīdu an yadhaba', french: 'Il veut aller — même structure' },
         ],
       },
