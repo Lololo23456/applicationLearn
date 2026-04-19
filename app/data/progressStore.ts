@@ -43,6 +43,10 @@ export function getAllProgress(): CardProgress[] {
   return Array.from(store.values())
 }
 
+export function getLearnedCount(cardIds: string[]): number {
+  return cardIds.filter(id => getProgress(id).repetitions >= 1).length
+}
+
 export function getStats(allCardIds: string[]): {
   learned: number
   mastered: number
