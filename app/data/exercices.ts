@@ -73,22 +73,18 @@ const MAX_NEW     = 5
 const MAX_REVIEWS = 10
 const MAX_TOTAL   = 15
 
+// Session intelligente structurée :
+// - nouvelles cartes → uniquement de la leçon active (première débloquée avec du nouveau)
+// - révisions dues   → de TOUTES les leçons apprises
 export function buildSmartSession(
-  vocabCards:   Card[],       // toutes les cartes vocab des villes débloquées (ordre curriculum)
-  letterCards:  LetterCard[]  // toutes les lettres des villes débloquées
+  activeNewVocab:   Card[],       // nouvelles cartes de la leçon active uniquement
+  activeNewLetters: LetterCard[], // nouvelles lettres de la leçon active uniquement
+  dueVocab:        Card[],       // toutes révisions dues (vocab)
+  dueLetters:      LetterCard[], // toutes révisions dues (alphabet)
 ): Exercise[] {
-  // Classifier vocab
-  const newVocab  = vocabCards.filter(c => getProgress(c.arabic).repetitions === 0)
-  const dueVocab  = vocabCards.filter(c => isCardDue(c.arabic))
-
-  // Classifier alphabet
-  const newLetters  = letterCards.filter(c => getProgress(c.letter).repetitions === 0)
-  const dueLetters  = letterCards.filter(c => isCardDue(c.letter))
-
-  // Sélectionner (vocab prioritaire sur alphabet pour les nouvelles)
-  const pickedNewVocab   = newVocab.slice(0, MAX_NEW)
+  const pickedNewVocab   = activeNewVocab.slice(0, MAX_NEW)
   const remainingNew     = MAX_NEW - pickedNewVocab.length
-  const pickedNewLetters = newLetters.slice(0, remainingNew)
+  const pickedNewLetters = activeNewLetters.slice(0, remainingNew)
 
   const pickedDueVocab   = shuffle([...dueVocab]).slice(0, MAX_REVIEWS)
   const remainingDue     = MAX_REVIEWS - pickedDueVocab.length
@@ -96,27 +92,17 @@ export function buildSmartSession(
 
   const exercises: Exercise[] = []
 
-  // Phase 1 : introduction flashcards (nouvelles cartes)
+  // Phase 1 : introduction flashcards (leçon active)
   pickedNewVocab.forEach(card   => exercises.push({ type: 'flashcard',          card }))
   pickedNewLetters.forEach(card => exercises.push({ type: 'alphabet-flashcard', card }))
 
-  // Phase 2 : révisions QCM (cartes dues)
+  // Phase 2 : révisions QCM (toutes leçons)
   pickedDueVocab.forEach(card   => exercises.push({ type: 'qcm',          card }))
   pickedDueLetters.forEach(card => exercises.push({ type: 'alphabet-qcm', card }))
 
-  // Phase 3 : test QCM des nouvelles cartes (rappel espacé)
+  // Phase 3 : test QCM nouvelles cartes (rappel espacé)
   pickedNewVocab.forEach(card   => exercises.push({ type: 'qcm',          card }))
   pickedNewLetters.forEach(card => exercises.push({ type: 'alphabet-qcm', card }))
 
   return exercises.slice(0, MAX_TOTAL)
-}
-
-export function hasCardsAvailable(vocabCards: Card[], letterCards: LetterCard[]): boolean {
-  const hasNew = [...vocabCards, ...letterCards].some(c => {
-    const id = 'arabic' in c ? c.arabic : c.letter
-    return getProgress(id).repetitions === 0
-  })
-  const hasDue = [...vocabCards.map(c => c.arabic), ...letterCards.map(c => c.letter)]
-    .some(id => isCardDue(id))
-  return hasNew || hasDue
 }
