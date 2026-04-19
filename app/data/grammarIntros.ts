@@ -4,10 +4,16 @@ export interface GrammarExample {
   french: string
 }
 
+export interface GrammarTable {
+  headers: string[]
+  rows: string[][]
+}
+
 export interface GrammarPoint {
   title: string
   explanation: string
   examples?: GrammarExample[]
+  table?: GrammarTable
 }
 
 export interface GrammarIntro {
@@ -415,31 +421,52 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
 
   {
     lessonId: 'conj-l1',
-    conceptTitle: "La racine trilittère : le génie de l'arabe",
-    summary: "Toute la morphologie arabe est construite autour de racines de 3 consonnes.",
+    conceptTitle: "Les pronoms et le passé (الضمائر والماضي)",
+    summary: "Avant de conjuguer, il faut connaître les pronoms arabes — ils sont différents du français.",
     color: '#F4ECF7',
     points: [
       {
-        title: "Le système des racines",
-        explanation: "La plus grande particularité de l'arabe : presque tous les mots dérivent d'une RACINE de 3 consonnes (parfois 4). Ces consonnes portent un sens fondamental. En faisant varier les voyelles et les préfixes/suffixes autour de cette racine, on crée des dizaines de mots liés sémantiquement.",
-        examples: [
-          { arabic: 'ك-ت-ب', transliteration: 'k-t-b', french: "idée d'écriture" },
-          { arabic: 'كَتَبَ / كِتَاب / كَاتِب / مَكْتَبَة / مَكْتُوب', transliteration: 'kataba / kitāb / kātib / maktaba / maktūb', french: 'écrire / livre / écrivain / bibliothèque / lettre (écrite)' },
-        ],
+        title: "Les pronoms personnels (الضمائر الشخصية)",
+        explanation: "L'arabe distingue le masculin et le féminin à toutes les personnes. Il n'y a pas de 'tu' unique : أَنْتَ pour un homme, أَنْتِ pour une femme. Il n'y a pas non plus de 'vous' de politesse — l'arabe formel use du pluriel.",
+        table: {
+          headers: ['Pronom', 'Arabe', 'Translit.'],
+          rows: [
+            ['je',            'أَنَا',   'anā'],
+            ['tu (masc.)',    'أَنْتَ',  'anta'],
+            ['tu (fém.)',     'أَنْتِ',  'anti'],
+            ['il',           'هُوَ',   'huwa'],
+            ['elle',         'هِيَ',   'hiya'],
+            ['nous',         'نَحْنُ',  'naḥnu'],
+            ['vous (masc.)', 'أَنْتُمْ', 'antum'],
+            ['vous (fém.)',  'أَنْتُنَّ','antunna'],
+            ['ils',          'هُمْ',   'hum'],
+            ['elles',        'هُنَّ',  'hunna'],
+          ],
+        },
       },
       {
-        title: "Le schème verbal (الوَزْن)",
-        explanation: "Les grammairiens arabes utilisent les consonnes ف-ع-ل (f-ʿ-l) comme consonnes fantômes pour illustrer les patrons morphologiques. فَعَلَ (faʿala) = le patron du verbe passé. En remplaçant ف par k, ع par t, ل par b : kataba. Ce système permet de décrire toute la morphologie.",
-        examples: [
-          { arabic: 'فَعَلَ ← كَتَبَ', transliteration: 'faʿala ← kataba', french: 'schème ← verbe réel (ك-ت-ب)' },
-          { arabic: 'فَعَلَ ← قَرَأَ', transliteration: 'faʿala ← qaraʾa', french: 'même schème pour lire (ق-ر-أ)' },
-        ],
+        title: "Le passé (الماضي) : des suffixes sur la racine",
+        explanation: "Au passé, on part de la 3ème personne masculin singulier — la forme la plus simple (كَتَبَ = kataba). On ajoute ensuite des SUFFIXES pour changer la personne. La racine elle-même ne change pas.",
+        table: {
+          headers: ['Pronom', 'Arabe', 'Translit.', 'Suffixe'],
+          rows: [
+            ['أَنَا  (je)',         'كَتَبْتُ',  'katabtu',  '-tu  ـْتُ'],
+            ['أَنْتَ  (tu m.)',     'كَتَبْتَ',  'katabta',  '-ta  ـْتَ'],
+            ['أَنْتِ  (tu f.)',     'كَتَبْتِ',  'katabti',  '-ti  ـْتِ'],
+            ['هُوَ  (il)',          'كَتَبَ',    'kataba',   '—  (base)'],
+            ['هِيَ  (elle)',        'كَتَبَتْ',  'katabat',  '-at  ـَتْ'],
+            ['نَحْنُ  (nous)',      'كَتَبْنَا', 'katabnā',  '-nā  ـْنَا'],
+            ['أَنْتُمْ  (vous m.)', 'كَتَبْتُمْ','katabtum', '-tum ـْتُمْ'],
+            ['هُمْ  (ils)',         'كَتَبُوا',  'katabū',   '-ū   ـُوا'],
+            ['هُنَّ  (elles)',      'كَتَبْنَ',  'katabna',  '-na  ـْنَ'],
+          ],
+        },
       },
       {
-        title: "Pourquoi apprendre les racines ?",
-        explanation: "Connaître la racine d'un mot permet de deviner le sens d'autres mots de la même famille. Quand vous verrez مَكْتَبَة pour la première fois, si vous connaissez ك-ت-ب, vous devinrez que c'est 'lieu d'écriture = bureau/bibliothèque'. Cette logique s'applique à tout l'arabe.",
+        title: "La racine trilittère : le génie de l'arabe",
+        explanation: "Presque tous les mots arabes dérivent d'une RACINE de 3 consonnes. Ces consonnes portent un sens fondamental — les voyelles et les affixes créent des dizaines de mots liés. Connaître ك-ت-ب suffit pour deviner كِتَاب (livre), كَاتِب (écrivain), مَكْتَبَة (bibliothèque).",
         examples: [
-          { arabic: 'ع-ل-م → عَلِمَ / عِلْم / عَالِم / مَعْلُومَة', transliteration: 'ʿ-l-m', french: 'savoir / connaissance / savant / information' },
+          { arabic: 'كَتَبَ / كِتَاب / كَاتِب / مَكْتَبَة', transliteration: 'kataba / kitāb / kātib / maktaba', french: 'écrire / livre / écrivain / bibliothèque' },
         ],
       },
     ],
@@ -447,29 +474,48 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
 
   {
     lessonId: 'conj-l2',
-    conceptTitle: "Le passé et le présent arabes",
-    summary: "Le verbe arabe marque le temps par des voyelles internes + des préfixes/suffixes.",
+    conceptTitle: "Le présent (المضارع) : préfixes et suffixes",
+    summary: "Au présent, chaque personne est marquée par un préfixe — et parfois un suffixe final.",
     color: '#F4ECF7',
     points: [
       {
-        title: "Le passé (الماضي) : voyelles dans la racine",
-        explanation: "Au passé, le verbe porte ses informations de temps dans les voyelles entre les consonnes de la racine. La 3ème personne masculin singulier (il) est la forme de référence — la plus simple : ka-ta-ba. Les autres personnes s'obtiennent par des suffixes.",
-        examples: [
-          { arabic: 'كَتَبَ / كَتَبَتْ / كَتَبُوا', transliteration: 'kataba / katabat / katabū', french: 'il écrivit / elle écrivit / ils écrivirent' },
-        ],
+        title: "Les préfixes du présent — à mémoriser",
+        explanation: "Au présent (المضارع), la personne s'exprime par un PRÉFIXE placé avant la racine. Il y en a seulement 4 à retenir : أَ pour 'je', تَ pour 'tu/elle', يَ pour 'il/ils', نَ pour 'nous'. C'est le cœur du système.",
+        table: {
+          headers: ['Préfixe', 'Personne(s)', 'Exemple'],
+          rows: [
+            ['أَ', "je (أَنَا)",             'أَكْتُبُ — aktubu'],
+            ['تَ', 'tu (m./f.), elle',        'تَكْتُبُ — taktubu'],
+            ['يَ', 'il, ils',                 'يَكْتُبُ — yaktubu'],
+            ['نَ', 'nous',                    'نَكْتُبُ — naktubu'],
+          ],
+        },
       },
       {
-        title: "Le présent (المضارع) : préfixes + voyelles",
-        explanation: "Au présent, la personne s'exprime par des PRÉFIXES : يَ (il/ils), تَ (tu/vous/elle), أَ (je), نَ (nous). La racine subit aussi des changements de voyelles internes selon le schème du verbe.",
-        examples: [
-          { arabic: 'يَكْتُبُ / تَكْتُبُ / أَكْتُبُ / نَكْتُبُ', transliteration: 'yaktubu / taktubu / aktubu / naktubu', french: "il écrit / tu écris / j'écris / nous écrivons" },
-        ],
+        title: "Tableau complet du présent — كَتَبَ يَكْتُبُ",
+        explanation: "Au pluriel et pour 'tu féminin', on ajoute aussi un SUFFIXE après la racine : ونَ pour 'vous/ils', ينَ pour 'tu féminin', نَ pour 'elles'. La voyelle finale ُ (ḍamma) indique l'indicatif.",
+        table: {
+          headers: ['Pronom', 'Arabe', 'Translit.'],
+          rows: [
+            ['أَنَا  (je)',         'أَكْتُبُ',    'aktubu'],
+            ['أَنْتَ  (tu m.)',     'تَكْتُبُ',    'taktubu'],
+            ['أَنْتِ  (tu f.)',     'تَكْتُبِينَ', 'taktubīna'],
+            ['هُوَ  (il)',          'يَكْتُبُ',    'yaktubu'],
+            ['هِيَ  (elle)',        'تَكْتُبُ',    'taktubu'],
+            ['نَحْنُ  (nous)',      'نَكْتُبُ',    'naktubu'],
+            ['أَنْتُمْ  (vous m.)', 'تَكْتُبُونَ', 'taktubūna'],
+            ['هُمْ  (ils)',         'يَكْتُبُونَ', 'yaktubūna'],
+            ['هُنَّ  (elles)',      'يَكْتُبْنَ',  'yaktubna'],
+          ],
+        },
       },
       {
         title: "Les 3 modes du présent",
-        explanation: "La voyelle finale du présent indique le mode grammatical. ُ (ḍamma) = indicatif (yaktub-u = il écrit). َ (fatḥa) = subjonctif (yaktub-a = qu'il écrive). ْ (sukūn) = apocopé/jussif (yaktub = qu'il écrive / négatif). Ce système est essentiel pour lire le Coran.",
+        explanation: "La voyelle finale du présent change selon le mode grammatical : ُ (indicatif, fait réel), َ (subjonctif, après أَنْ), ْ (apocopé, après لَمْ pour la négation du passé). Ce système est fondamental pour lire le Coran.",
         examples: [
-          { arabic: 'يَكْتُبُ / أَنْ يَكْتُبَ / لَمْ يَكْتُبْ', transliteration: 'yaktubu / an yaktuba / lam yaktub', french: "il écrit / qu'il écrive / il n'a pas écrit" },
+          { arabic: 'يَكْتُبُ', transliteration: 'yaktubu', french: 'il écrit (indicatif)' },
+          { arabic: 'أَنْ يَكْتُبَ', transliteration: 'an yaktuba', french: "qu'il écrive (subjonctif)" },
+          { arabic: 'لَمْ يَكْتُبْ', transliteration: 'lam yaktub', french: "il n'a pas écrit (apocopé + لَمْ)" },
         ],
       },
     ],
@@ -625,6 +671,208 @@ export const GRAMMAR_INTROS: GrammarIntro[] = [
         examples: [
           { arabic: 'مَعَ السَّلَامَة — فِي أَمَانِ اللّٰهِ', transliteration: 'maʿa s-salāma — fī amāni llāhi', french: 'Au revoir — Sous la protection de Dieu (formule plus formelle)' },
         ],
+      },
+    ],
+  },
+  // ── Nouvelles leçons de conjugaison ─────────────────────────────────────────
+
+  {
+    lessonId: 'conj-l6',
+    conceptTitle: "L'impératif (الأمر) et la négation",
+    summary: "L'impératif se forme directement depuis le présent. La négation varie selon le temps.",
+    color: '#F4ECF7',
+    points: [
+      {
+        title: "Former l'impératif positif",
+        explanation: "L'impératif (ordre, 2ème pers. masc. sing.) se forme à partir du présent en retirant le préfixe تَ. Si le résultat commence par une consonne sans voyelle, on ajoute une hamza prothétique اُ (ḍamma) ou اِ (kasra) selon le schème.",
+        table: {
+          headers: ['Présent (tu)', 'Retirer تَ', 'Impératif', 'Translit.'],
+          rows: [
+            ['تَدْخُلُ', '→ دْخُلُ', 'اُدْخُلْ', 'udkhul — entre !'],
+            ['تَخْرُجُ', '→ خْرُجُ', 'اُخْرُجْ', 'ukhruj — sors !'],
+            ['تَكْتُبُ', '→ كْتُبُ', 'اُكْتُبْ', 'uktub — écris !'],
+            ['تَفْتَحُ', '→ فْتَحُ', 'اِفْتَحْ', 'iftaḥ — ouvre !'],
+          ],
+        },
+      },
+      {
+        title: "La négation du présent : لَا",
+        explanation: "Pour nier une action au présent (ou futur proche), on place لَا avant le verbe. La forme du verbe ne change pas. لَا تَدْخُلْ = n'entre pas (impératif négatif) — ici la voyelle finale passe en sukūn.",
+        examples: [
+          { arabic: 'لَا يَدْخُلُ', transliteration: 'lā yadkhulu', french: 'il ne rentre pas' },
+          { arabic: 'لَا تَخْرُجْ', transliteration: 'lā takhruj', french: "ne sors pas ! (impératif négatif)" },
+        ],
+      },
+      {
+        title: "La négation du passé : لَمْ + apocopé",
+        explanation: "Pour nier une action passée, on utilise لَمْ suivi du présent à l'apocopé (sukūn final, sans ن au pluriel). C'est une structure très fréquente en arabe classique et dans le Coran.",
+        examples: [
+          { arabic: 'لَمْ يَدْخُلْ', transliteration: 'lam yadkhul', french: "il n'est pas entré (litt. : pas il entre-apocopé)" },
+          { arabic: 'لَمْ يَخْرُجْ', transliteration: 'lam yakhruj', french: "il n'est pas sorti" },
+        ],
+      },
+    ],
+  },
+
+  {
+    lessonId: 'conj-l7',
+    conceptTitle: "Le verbe transitif et le complément d'objet",
+    summary: "Certains verbes exigent un complément direct (transitif) ; d'autres non (intransitif).",
+    color: '#F4ECF7',
+    points: [
+      {
+        title: "Verbes transitifs (الفعل المتعدي)",
+        explanation: "Un verbe transitif exige un complément d'objet direct (COD). En arabe, le COD se met au cas accusatif (voyelle finale -a ou tanwīn -an). Exemples : نَظَرَ إِلَى (regarder vers) se construit avec la préposition إِلَى ; فَتَحَ (ouvrir) prend un COD direct.",
+        examples: [
+          { arabic: 'فَتَحَ الطَّالِبُ الْكِتَابَ', transliteration: 'fataḥa ṭ-ṭālibu l-kitāba', french: "L'étudiant ouvrit le livre (الكتاب accusatif)" },
+          { arabic: 'نَظَرَ إِلَى السَّمَاء', transliteration: 'naẓara ilā s-samāʾ', french: 'Il regarda vers le ciel (إِلَى + génitif)' },
+        ],
+      },
+      {
+        title: "La structure sujet-verbe-objet",
+        explanation: "En arabe, l'ordre habituel est VERBE + SUJET + OBJET (VSO), contrairement au français (SVO). Cependant, on peut aussi placer le sujet en premier (SVO). Le cas grammatical (nominatif/accusatif) permet d'identifier le sujet et l'objet même si l'ordre change.",
+        examples: [
+          { arabic: 'فَتَحَ الرَّجُلُ الْبَابَ', transliteration: 'fataḥa r-rajulu l-bāba', french: "L'homme ouvrit la porte (V-S-O)" },
+          { arabic: 'الرَّجُلُ فَتَحَ الْبَابَ', transliteration: 'ar-rajulu fataḥa l-bāba', french: "L'homme, il ouvrit la porte (S-V-O, mise en relief)" },
+        ],
+      },
+      {
+        title: "Le pronom objet suffixé",
+        explanation: "Au lieu d'un nom, l'objet peut être un pronom attaché directement au verbe. Ces pronoms-suffixes objets sont : هُ (le/lui), هَا (la/lui), هُمْ (les), كَ (te), نِي (me). Ils s'attachent sans espace.",
+        table: {
+          headers: ['Suffixe', 'Sens', 'Exemple'],
+          rows: [
+            ['-هُ', 'le / lui (m.)',  'فَتَحَهُ — il l\'ouvrit'],
+            ['-هَا', 'la / lui (f.)', 'فَتَحَهَا — il l\'ouvrit (fém.)'],
+            ['-نِي', 'me',            'فَتَحَنِي — il m\'ouvrit'],
+            ['-كَ', 'te (m.)',        'فَتَحَكَ — il t\'ouvrit'],
+            ['-نَا', 'nous',          'فَتَحَنَا — il nous ouvrit'],
+          ],
+        },
+      },
+    ],
+  },
+
+  {
+    lessonId: 'conj-l8',
+    conceptTitle: "Le schème فَعِلَ et la notion de qualité",
+    summary: "Certains verbes Form I ont la voyelle centrale 'i' au passé — ils expriment souvent un état.",
+    color: '#F4ECF7',
+    points: [
+      {
+        title: "Schème فَعِلَ : verbes d'état et de qualité",
+        explanation: "Les verbes de schème فَعِلَ (voyelle i centrale) expriment souvent un état, une qualité ou une sensation : حَمِدَ (se réjouir/louer), فَهِمَ (comprendre), شَرِبَ (boire). Leur présent suit يَفْعَلُ (voyelle a). C'est le schème No. 2 de la Forme I.",
+        examples: [
+          { arabic: 'حَمِدَ — يَحْمَدُ', transliteration: 'ḥamida — yaḥmadu', french: 'il loua — il loue (schème فَعِلَ يَفْعَلُ)' },
+          { arabic: 'فَهِمَ — يَفْهَمُ', transliteration: 'fahima — yafhamu', french: 'il comprit — il comprend (même schème)' },
+        ],
+      },
+      {
+        title: "Tableau comparatif des 3 schèmes de la Forme I",
+        explanation: "La Forme I a trois voyelles possibles pour la consonne médiane au passé (a, i, u), et le présent suit des patterns associés. La voyelle du présent doit être mémorisée avec le verbe.",
+        table: {
+          headers: ['Schème passé', 'Schème présent', 'Exemple', 'Sens'],
+          rows: [
+            ['فَعَلَ (-a-)', 'يَفْعُلُ (-u-)', 'كَتَبَ / يَكْتُبُ', 'écrire'],
+            ['فَعَلَ (-a-)', 'يَفْعَلُ (-a-)', 'ذَهَبَ / يَذْهَبُ', 'aller'],
+            ['فَعَلَ (-a-)', 'يَفْعِلُ (-i-)', 'جَلَسَ / يَجْلِسُ', 's\'asseoir'],
+            ['فَعِلَ (-i-)', 'يَفْعَلُ (-a-)', 'فَهِمَ / يَفْهَمُ', 'comprendre'],
+            ['فَعُلَ (-u-)', 'يَفْعُلُ (-u-)', 'كَرُمَ / يَكْرُمُ', 'être généreux'],
+          ],
+        },
+      },
+      {
+        title: "الْحَمْدُ : un masdar omniprésent",
+        explanation: "الْحَمْد (louange) est le masdar de حَمِدَ. C'est l'un des mots les plus fréquents de l'islam et du Coran — الْحَمْدُ لِلّٰهِ est récité des millions de fois par jour. Maîtriser ce masdar, c'est ouvrir la porte à toute la liturgie islamique.",
+        examples: [
+          { arabic: 'الْحَمْدُ لِلّٰهِ رَبِّ الْعَالَمِين', transliteration: 'al-ḥamdu lillāhi rabbi l-ʿālamīn', french: 'Louange à Dieu, Seigneur des mondes (Coran 1:2)' },
+        ],
+      },
+    ],
+  },
+
+  {
+    lessonId: 'conj-l9',
+    conceptTitle: "Le lieu et l'habitat : prépositions et cas",
+    summary: "Les prépositions en arabe régissent le cas génitif et permettent d'exprimer lieu et manière.",
+    color: '#F4ECF7',
+    points: [
+      {
+        title: "Les prépositions courantes (حروف الجر)",
+        explanation: "En arabe, une préposition place obligatoirement le nom qui suit au cas GÉNITIF (kasra finale : -i ou tanwīn -in). Les prépositions les plus fréquentes sont à mémoriser avec leur sens.",
+        table: {
+          headers: ['Préposition', 'Translit.', 'Sens', 'Exemple'],
+          rows: [
+            ['فِي',  'fī',    'dans / en',    'فِي الْبَيْتِ — dans la maison'],
+            ['مِنْ', 'min',   'de / depuis',  'مِنَ الْمَدِينَةِ — de la ville'],
+            ['إِلَى','ilā',   'vers / à',     'إِلَى الْمَسْجِدِ — vers la mosquée'],
+            ['عَلَى','ʿalā',  'sur',          'عَلَى الْكُرْسِيِّ — sur la chaise'],
+            ['مَعَ', 'maʿa',  'avec',         'مَعَ الْأَصْدِقَاءِ — avec les amis'],
+            ['بِ',   'bi',    'avec / par',   'بِاللّٰهِ — par Dieu'],
+            ['لِ',   'li',    'pour / à',     'لِلطَّالِبِ — pour l\'étudiant'],
+          ],
+        },
+      },
+      {
+        title: "Exprimer où on habite : أَسْكُنُ فِي",
+        explanation: "Pour dire où on habite, on utilise سَكَنَ (habiter) + فِي (dans) + le lieu au génitif. C'est la structure la plus naturelle en arabe classique pour exprimer la résidence.",
+        examples: [
+          { arabic: 'أَسْكُنُ فِي بَارِيس', transliteration: 'askunu fī bārīs', french: "J'habite à Paris" },
+          { arabic: 'يَسْكُنُ فِي مَدِينَةٍ كَبِيرَة', transliteration: 'yaskunu fī madīnatin kabīra', french: 'Il habite dans une grande ville' },
+        ],
+      },
+      {
+        title: "La phrase d'existence : عِنْدَ et لَدَى",
+        explanation: "Pour exprimer 'avoir' ou 'être chez', l'arabe n'a pas de verbe 'avoir'. On utilise عِنْدَ (chez/auprès de) + pronom suffixe. عِنْدِي = j'ai (litt. : auprès de moi). C'est fondamental.",
+        table: {
+          headers: ['Arabe', 'Translit.', 'Sens'],
+          rows: [
+            ['عِنْدِي',   'ʿindī',   "j'ai (auprès de moi)"],
+            ['عِنْدَكَ',  'ʿindaka', 'tu as (m.)'],
+            ['عِنْدَهُ',  'ʿindahu', 'il a'],
+            ['عِنْدَهَا', 'ʿindahā', 'elle a'],
+            ['عِنْدَنَا', 'ʿindanā', 'nous avons'],
+          ],
+        },
+      },
+    ],
+  },
+
+  {
+    lessonId: 'conj-l10',
+    conceptTitle: "Le retour et l'action : deux verbes fondamentaux",
+    summary: "رَجَعَ (retourner) et عَمِلَ (agir) ouvrent des thèmes grammaticaux clés : la direction et le but.",
+    color: '#F4ECF7',
+    points: [
+      {
+        title: "Exprimer le but : لِ + subjonctif",
+        explanation: "Pour exprimer le but d'une action (pour faire quelque chose), on utilise لِ + le verbe au subjonctif (mode apocopé sans tanwīn). Cette construction est très fréquente en arabe classique.",
+        examples: [
+          { arabic: 'جِئْتُ لِأَتَعَلَّمَ', transliteration: 'jiʾtu li-ataʿallama', french: "Je suis venu pour apprendre" },
+          { arabic: 'يَعْمَلُ لِيَعِيشَ', transliteration: 'yaʿmalu li-yaʿīsha', french: 'Il travaille pour vivre' },
+        ],
+      },
+      {
+        title: "إِنَّ et les particules de renforcement",
+        explanation: "إِنَّ (certes/vraiment) est une particule très fréquente qui renforce l'affirmation. Elle place le sujet qui suit à l'ACCUSATIF (voyelle -a). C'est une règle fondamentale de la grammaire arabe (النواسخ).",
+        examples: [
+          { arabic: 'إِنَّا إِلَى اللّٰهِ رَاجِعُون', transliteration: 'innā ilā llāhi rājiʿūn', french: 'Certes, nous retournons vers Dieu (Coran 2:156)' },
+          { arabic: 'إِنَّ الْعَمَلَ عِبَادَة', transliteration: 'inna l-ʿamala ʿibāda', french: 'Certes, le travail est une adoration' },
+        ],
+      },
+      {
+        title: "Révision : les temps en arabe",
+        explanation: "L'arabe classique a essentiellement 2 temps : le passé (الماضي) et le présent-futur (المضارع). Le futur simple s'exprime avec سَوْفَ ou سَ- préfixé au présent. Il n'y a pas de temps composés (passé composé, imparfait) — le contexte et les adverbes précisent.",
+        table: {
+          headers: ['Temps', 'Forme', 'Exemple', 'Sens'],
+          rows: [
+            ['Passé',            'الماضي',  'رَجَعَ',        'il retourna'],
+            ['Présent',          'المضارع', 'يَرْجِعُ',      'il retourne'],
+            ['Futur (proche)',   'سَـ + مضارع', 'سَيَرْجِعُ', 'il va retourner'],
+            ['Futur (certain)',  'سَوْفَ + مضارع', 'سَوْفَ يَرْجِعُ', 'il retournera sûrement'],
+            ['Passé négatif',    'لَمْ + مجزوم', 'لَمْ يَرْجِعْ', "il n'est pas retourné"],
+          ],
+        },
       },
     ],
   },
