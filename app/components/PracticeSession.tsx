@@ -44,9 +44,9 @@ export default function PracticeSession({ lesson, onComplete }: Props) {
       </View>
 
       {current.type === 'qcm' ? (
-        <QCMExercise exercise={current} onAnswer={handleAnswer} />
+        <QCMExercise key={index} exercise={current} onAnswer={handleAnswer} />
       ) : (
-        <WritingExercise exercise={current} onAnswer={handleAnswer} />
+        <WritingExercise key={index} exercise={current} onAnswer={handleAnswer} />
       )}
     </View>
   )
