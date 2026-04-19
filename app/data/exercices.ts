@@ -65,44 +65,40 @@ export function buildAlphabetQCM(targetCard: LetterCard) {
 }
 
 // ── Session intelligente ──────────────────────────────────────────────────────
-// Phase 1 : flashcards intro pour les nouvelles cartes
-// Phase 2 : QCMs pour les révisions dues
-// Phase 3 : QCMs test pour les nouvelles cartes (rappel espacé)
+// Règle : chaque carte est d'abord vue en flashcard, puis testée en QCM.
+// Nouvelles cartes → leçon active uniquement.
+// Révisions dues   → toutes les leçons apprises.
+// La session ne se termine que quand tous les QCMs sont réussis (géré dans SmartSessionScreen).
 
-const MAX_NEW     = 5
-const MAX_REVIEWS = 10
-const MAX_TOTAL   = 15
+const MAX_NEW_ITEMS    = 4   // nouvelles cartes max par session
+const MAX_REVIEW_ITEMS = 4   // révisions max par session
 
-// Session intelligente structurée :
-// - nouvelles cartes → uniquement de la leçon active (première débloquée avec du nouveau)
-// - révisions dues   → de TOUTES les leçons apprises
 export function buildSmartSession(
-  activeNewVocab:   Card[],       // nouvelles cartes de la leçon active uniquement
-  activeNewLetters: LetterCard[], // nouvelles lettres de la leçon active uniquement
-  dueVocab:        Card[],       // toutes révisions dues (vocab)
-  dueLetters:      LetterCard[], // toutes révisions dues (alphabet)
+  activeNewVocab:   Card[],
+  activeNewLetters: LetterCard[],
+  dueVocab:        Card[],
+  dueLetters:      LetterCard[],
 ): Exercise[] {
-  const pickedNewVocab   = activeNewVocab.slice(0, MAX_NEW)
-  const remainingNew     = MAX_NEW - pickedNewVocab.length
-  const pickedNewLetters = activeNewLetters.slice(0, remainingNew)
+  // Sélectionner les items
+  const pickedNewVocab   = activeNewVocab.slice(0, MAX_NEW_ITEMS)
+  const pickedNewLetters = activeNewLetters.slice(0, MAX_NEW_ITEMS - pickedNewVocab.length)
+  const pickedDueVocab   = shuffle([...dueVocab]).slice(0, MAX_REVIEW_ITEMS)
+  const pickedDueLetters = shuffle([...dueLetters]).slice(0, MAX_REVIEW_ITEMS - pickedDueVocab.length)
 
-  const pickedDueVocab   = shuffle([...dueVocab]).slice(0, MAX_REVIEWS)
-  const remainingDue     = MAX_REVIEWS - pickedDueVocab.length
-  const pickedDueLetters = shuffle([...dueLetters]).slice(0, remainingDue)
+  const allVocab   = [...pickedNewVocab,   ...pickedDueVocab]
+  const allLetters = [...pickedNewLetters, ...pickedDueLetters]
 
-  const exercises: Exercise[] = []
+  // Phase 1 : flashcard pour TOUS les items (intro ou rappel)
+  const flashcards: Exercise[] = [
+    ...allVocab.map(card   => ({ type: 'flashcard'          as const, card })),
+    ...allLetters.map(card => ({ type: 'alphabet-flashcard' as const, card })),
+  ]
 
-  // Phase 1 : introduction flashcards (leçon active)
-  pickedNewVocab.forEach(card   => exercises.push({ type: 'flashcard',          card }))
-  pickedNewLetters.forEach(card => exercises.push({ type: 'alphabet-flashcard', card }))
+  // Phase 2 : QCM pour TOUS les items (test)
+  const qcms: Exercise[] = [
+    ...allVocab.map(card   => ({ type: 'qcm'          as const, card })),
+    ...allLetters.map(card => ({ type: 'alphabet-qcm' as const, card })),
+  ]
 
-  // Phase 2 : révisions QCM (toutes leçons)
-  pickedDueVocab.forEach(card   => exercises.push({ type: 'qcm',          card }))
-  pickedDueLetters.forEach(card => exercises.push({ type: 'alphabet-qcm', card }))
-
-  // Phase 3 : test QCM nouvelles cartes (rappel espacé)
-  pickedNewVocab.forEach(card   => exercises.push({ type: 'qcm',          card }))
-  pickedNewLetters.forEach(card => exercises.push({ type: 'alphabet-qcm', card }))
-
-  return exercises.slice(0, MAX_TOTAL)
+  return [...flashcards, ...qcms]
 }

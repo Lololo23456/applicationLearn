@@ -1,8 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { CardProgress, initialProgress, updateSM2, isDue } from './sm2'
+import { CardProgress, initialProgress, updateSM2, isDue, isMastered } from './sm2'
 
-const STORAGE_KEY = 'sm2_progress_v1'
+const STORAGE_KEY = 'fusha_progress_v1'
+const STREAK_KEY  = 'fusha_streak_v1'
+
 const store = new Map<string, CardProgress>()
+
+interface StreakData { streak: number; lastDate: string }
+let streakCache: StreakData = { streak: 0, lastDate: '' }
 
 export async function initStore(): Promise<void> {
   try {
@@ -11,21 +16,17 @@ export async function initStore(): Promise<void> {
       const entries: CardProgress[] = JSON.parse(raw)
       entries.forEach(p => store.set(p.cardId, p))
     }
-  } catch {
-    // Si la lecture échoue on repart d'un store vide
-  }
+    const streakRaw = await AsyncStorage.getItem(STREAK_KEY)
+    if (streakRaw) streakCache = JSON.parse(streakRaw)
+  } catch {}
 }
 
 function persist(): void {
-  const entries = Array.from(store.values())
-  AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(entries)).catch(() => {})
+  AsyncStorage.setItem(STORAGE_KEY, JSON.stringify([...store.values()])).catch(() => {})
 }
 
 export function getProgress(cardId: string): CardProgress {
-  if (!store.has(cardId)) {
-    store.set(cardId, initialProgress(cardId))
-  }
-  return store.get(cardId)!
+  return store.get(cardId) ?? initialProgress(cardId)
 }
 
 export function recordAnswer(cardId: string, quality: number): CardProgress {
@@ -35,16 +36,34 @@ export function recordAnswer(cardId: string, quality: number): CardProgress {
   return updated
 }
 
+export async function recordSessionComplete(): Promise<void> {
+  const today = new Date().toISOString().slice(0, 10)
+  if (streakCache.lastDate === today) return
+  const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10)
+  streakCache = {
+    streak: streakCache.lastDate === yesterday ? streakCache.streak + 1 : 1,
+    lastDate: today,
+  }
+  await AsyncStorage.setItem(STREAK_KEY, JSON.stringify(streakCache)).catch(() => {})
+}
+
+export function getStreak(): number {
+  const today     = new Date().toISOString().slice(0, 10)
+  const yesterday = new Date(Date.now() - 864e5).toISOString().slice(0, 10)
+  if (streakCache.lastDate === today || streakCache.lastDate === yesterday) return streakCache.streak
+  return 0
+}
+
 export function getDueCardIds(cardIds: string[]): string[] {
   return cardIds.filter(id => isDue(getProgress(id)))
 }
 
-export function getAllProgress(): CardProgress[] {
-  return Array.from(store.values())
-}
-
 export function getLearnedCount(cardIds: string[]): number {
   return cardIds.filter(id => getProgress(id).repetitions >= 1).length
+}
+
+export function getMasteredCount(cardIds: string[]): number {
+  return cardIds.filter(id => isMastered(getProgress(id))).length
 }
 
 export function isCardDue(cardId: string): boolean {
@@ -52,26 +71,17 @@ export function isCardDue(cardId: string): boolean {
 }
 
 export function getNextReviewTime(cardIds: string[]): number | null {
-  const learned = cardIds.filter(id => getProgress(id).repetitions >= 1)
-  if (learned.length === 0) return null
-  return Math.min(...learned.map(id => getProgress(id).nextReview))
+  const future = cardIds
+    .map(id => getProgress(id))
+    .filter(p => p.repetitions > 0 && p.nextReview > Date.now())
+    .map(p => p.nextReview)
+  return future.length ? Math.min(...future) : null
 }
 
-export function getStats(allCardIds: string[]): {
-  learned: number
-  mastered: number
-  dueToday: number
-  total: number
-} {
-  const total = allCardIds.length
-  let learned = 0
-  let mastered = 0
-  let dueToday = 0
-  for (const id of allCardIds) {
-    const p = getProgress(id)
-    if (p.repetitions >= 1) learned++
-    if (p.repetitions >= 3) mastered++
-    if (isDue(p)) dueToday++
-  }
-  return { learned, mastered, dueToday, total }
+export function getStats(allIds: string[]) {
+  const total   = allIds.length
+  const learned = getLearnedCount(allIds)
+  const mastered = getMasteredCount(allIds)
+  const due     = getDueCardIds(allIds).length
+  return { total, learned, mastered, due }
 }

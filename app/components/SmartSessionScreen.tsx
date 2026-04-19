@@ -1,67 +1,92 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useRouter } from 'expo-router'
 import { FlashCard } from './FlashCardScreen'
 import { QCM } from './QCM'
 import { AlphabetFlashCard, AlphabetQCM } from './AlphabetExercises'
 import { Exercise, isVocabExercise, buildQCM } from '../data/exercices'
-import { recordAnswer } from '../data/progressStore'
+import { recordAnswer, getProgress } from '../data/progressStore'
 import { Card } from '../data/cards'
-import { daysUntilReview } from '../data/sm2'
-import { getProgress } from '../data/progressStore'
 
 type Props = {
   initialQueue: Exercise[]
-  vocabPool: Card[]  // toutes les cartes vocab pour générer les distracteurs QCM
+  vocabPool: Card[]
+}
+
+function cardIdOf(e: Exercise): string {
+  return isVocabExercise(e) ? e.card.arabic : e.card.letter
 }
 
 export default function SmartSessionScreen({ initialQueue, vocabPool }: Props) {
   const router = useRouter()
-  const [queue, setQueue] = useState<Exercise[]>(initialQueue)
-  const [index, setIndex] = useState(0)
-  const [results, setResults] = useState<{ cardId: string; quality: number; isRemedy: boolean }[]>([])
-  const [done, setDone] = useState(false)
+
+  // IDs de toutes les cartes qui doivent être maîtrisées (= passer un QCM avec quality >= 3)
+  const targetCardIds = useMemo<Set<string>>(() => {
+    const ids = initialQueue
+      .filter(e => e.type === 'qcm' || e.type === 'alphabet-qcm')
+      .map(cardIdOf)
+    return new Set(ids)
+  }, [])
+
+  const [queue, setQueue]         = useState<Exercise[]>(initialQueue)
+  const [index, setIndex]         = useState(0)
+  const [masteredIds, setMastered] = useState<Set<string>>(new Set())
+  const [results, setResults]     = useState<{ cardId: string; quality: number }[]>([])
+  const [done, setDone]           = useState(false)
 
   const current = queue[index]
 
   function handleNext(quality: number) {
-    const cardId = isVocabExercise(current) ? current.card.arabic : current.card.letter
+    const cardId = cardIdOf(current)
     recordAnswer(cardId, quality)
+    setResults(prev => [...prev, { cardId, quality }])
 
-    const isQCM = current.type === 'qcm' || current.type === 'alphabet-qcm'
+    const isQCM    = current.type === 'qcm' || current.type === 'alphabet-qcm'
     const isRemedy = current.isRemedy ?? false
 
-    setResults(prev => [...prev, { cardId, quality, isRemedy }])
+    let newMastered = masteredIds
+    let nextQueue   = queue
 
-    // Remédiation : QCM raté non encore remedié → flashcard en fin de queue
-    let nextQueue = queue
-    if (isQCM && quality < 3 && !isRemedy) {
-      const remedy: Exercise = isVocabExercise(current)
-        ? { type: 'flashcard',          card: current.card, isRemedy: true }
-        : { type: 'alphabet-flashcard', card: current.card, isRemedy: true }
-      nextQueue = [...queue, remedy]
-      setQueue(nextQueue)
+    if (isQCM) {
+      if (quality >= 3) {
+        // Carte maîtrisée
+        newMastered = new Set([...masteredIds, cardId])
+        setMastered(newMastered)
+      } else {
+        // Raté → remédiation : flashcard + QCM en fin de queue
+        const flashRemedy: Exercise = isVocabExercise(current)
+          ? { type: 'flashcard',          card: current.card, isRemedy: true }
+          : { type: 'alphabet-flashcard', card: current.card, isRemedy: true }
+        const qcmRemedy: Exercise = isVocabExercise(current)
+          ? { type: 'qcm',          card: current.card, isRemedy: true }
+          : { type: 'alphabet-qcm', card: current.card, isRemedy: true }
+        nextQueue = [...queue, flashRemedy, qcmRemedy]
+        setQueue(nextQueue)
+      }
     }
 
     const nextIndex = index + 1
-    if (nextIndex < nextQueue.length) {
-      setIndex(nextIndex)
-    } else {
+
+    // La session se termine quand TOUTES les cibles sont maîtrisées
+    // (peu importe s'il reste des exercices dans la queue)
+    const allMastered = [...targetCardIds].every(id => newMastered.has(id))
+
+    if (allMastered || nextIndex >= nextQueue.length) {
       setDone(true)
+    } else {
+      setIndex(nextIndex)
     }
   }
 
   if (done) {
-    // Ne compter que les premières tentatives (pas les remédiations)
-    const firstAttempts = results.filter(r => !r.isRemedy)
-    const correct = firstAttempts.filter(r => r.quality >= 3).length
-    const wrong   = firstAttempts.filter(r => r.quality < 3).length
+    const correct = results.filter(r => r.quality >= 3).length
+    const wrong   = results.filter(r => r.quality < 3).length
 
-    // Prochaine révision la plus proche
     const allCardIds = [...new Set(results.map(r => r.cardId))]
-    const nextReviewMs = Math.min(...allCardIds.map(id => getProgress(id).nextReview))
+    const reviews = allCardIds.map(id => getProgress(id).nextReview).filter(Boolean)
+    const nextReviewMs  = reviews.length ? Math.min(...reviews) : Date.now()
     const daysLeft = Math.max(0, Math.ceil((nextReviewMs - Date.now()) / (24 * 60 * 60 * 1000)))
-    const nextReviewLabel = daysLeft === 0 ? "aujourd'hui"
+    const nextReviewLabel = daysLeft === 0 ? "aujourd'hui plus tard"
       : daysLeft === 1 ? 'demain'
       : `dans ${daysLeft} jours`
 
@@ -73,12 +98,12 @@ export default function SmartSessionScreen({ initialQueue, vocabPool }: Props) {
         <View style={styles.summaryBox}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryIcon}>✅</Text>
-            <Text style={styles.summaryText}>{correct} carte{correct !== 1 ? 's' : ''} maîtrisée{correct !== 1 ? 's' : ''}</Text>
+            <Text style={styles.summaryText}>{masteredIds.size} carte{masteredIds.size !== 1 ? 's' : ''} maîtrisée{masteredIds.size !== 1 ? 's' : ''}</Text>
           </View>
           {wrong > 0 && (
             <View style={styles.summaryRow}>
               <Text style={styles.summaryIcon}>🔄</Text>
-              <Text style={styles.summaryText}>{wrong} carte{wrong !== 1 ? 's' : ''} à revoir</Text>
+              <Text style={styles.summaryText}>{wrong} tentative{wrong !== 1 ? 's' : ''} ratée{wrong !== 1 ? 's' : ''}</Text>
             </View>
           )}
           <View style={styles.summaryRow}>
@@ -97,7 +122,8 @@ export default function SmartSessionScreen({ initialQueue, vocabPool }: Props) {
     )
   }
 
-  const progressPct = queue.length > 0 ? index / queue.length : 0
+  // Progression = cartes maîtrisées / cibles totales
+  const progressPct = targetCardIds.size > 0 ? masteredIds.size / targetCardIds.size : 0
 
   function renderExercise() {
     switch (current.type) {
@@ -142,7 +168,7 @@ export default function SmartSessionScreen({ initialQueue, vocabPool }: Props) {
       <View style={styles.progressBar}>
         <View style={[styles.progressFill, { width: `${Math.round(progressPct * 100)}%` }]} />
       </View>
-      <Text style={styles.counter}>{index + 1} / {queue.length}</Text>
+      <Text style={styles.counter}>{masteredIds.size} / {targetCardIds.size} maîtrisées</Text>
       {current.isRemedy && (
         <Text style={styles.remedyBadge}>🔄 Remédiation</Text>
       )}
@@ -172,7 +198,6 @@ const styles = StyleSheet.create({
   },
   exerciseContainer: { flex: 1 },
 
-  // Écran de fin
   doneScreen: {
     flex: 1, backgroundColor: '#F5F4EF',
     alignItems: 'center', justifyContent: 'center',
