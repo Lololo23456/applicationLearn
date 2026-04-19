@@ -42,3 +42,22 @@ export function getDueCardIds(cardIds: string[]): string[] {
 export function getAllProgress(): CardProgress[] {
   return Array.from(store.values())
 }
+
+export function getStats(allCardIds: string[]): {
+  learned: number
+  mastered: number
+  dueToday: number
+  total: number
+} {
+  const total = allCardIds.length
+  let learned = 0
+  let mastered = 0
+  let dueToday = 0
+  for (const id of allCardIds) {
+    const p = getProgress(id)
+    if (p.repetitions >= 1) learned++
+    if (p.repetitions >= 3) mastered++
+    if (isDue(p)) dueToday++
+  }
+  return { learned, mastered, dueToday, total }
+}
