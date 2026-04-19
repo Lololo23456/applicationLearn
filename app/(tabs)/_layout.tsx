@@ -1,35 +1,45 @@
-// (tabs)/_layout.tsx — configuration de la barre d'onglets en bas de l'écran
-// Les deux onglets : Accueil (index.tsx) et Profil (profil.tsx)
-
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import { Tabs } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 
 export default function TabLayout() {
   return (
-    // tabBarActiveTintColor : couleur de l'onglet sélectionné (violet de l'app)
-    <Tabs screenOptions={{ tabBarActiveTintColor: '#634FCA' }}>
-
-      {/* Onglet Accueil — affiche roads.tsx via index.tsx */}
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#1B4F72',
+        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarStyle: {
+          backgroundColor: '#FFFFFF',
+          borderTopColor: '#F3F4F6',
+          borderTopWidth: 1,
+          paddingBottom: 8,
+          paddingTop: 6,
+          height: 60,
+        },
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Accueil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" color={color} size={size} />
-          ),
+          title: 'Apprendre',
+          tabBarIcon: ({ color, size }) => <Ionicons name="book-outline" color={color} size={size} />,
         }}
       />
-
-      {/* Onglet Profil — page vide pour l'instant */}
       <Tabs.Screen
-        name="profil"
+        name="revisions"
         options={{
-          title: 'Profil',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" color={color} size={size} />
-          ),
+          title: 'Révisions',
+          tabBarIcon: ({ color, size }) => <Ionicons name="refresh-circle-outline" color={color} size={size} />,
+        }}
+      />
+      <Tabs.Screen
+        name="stats"
+        options={{
+          title: 'Progrès',
+          tabBarIcon: ({ color, size }) => <Ionicons name="bar-chart-outline" color={color} size={size} />,
         }}
       />
     </Tabs>
-  );
+  )
 }
