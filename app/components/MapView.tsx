@@ -110,7 +110,7 @@ export default function MapView() {
   }
 
   return (
-    <>
+    <View style={styles.wrapper}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={[styles.scrollContent, { alignItems: 'center' }]}
@@ -147,12 +147,26 @@ export default function MapView() {
         </View>
       </ScrollView>
 
+      <TouchableOpacity
+        style={styles.learnBtn}
+        onPress={() => router.push('/apprendre')}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.learnBtnText}>Apprendre ▶</Text>
+        {dueCount > 0 && (
+          <View style={styles.learnBadge}>
+            <Text style={styles.learnBadgeText}>{dueCount}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
+
       <CitySheet city={selectedCity} onClose={() => setSelectedCity(null)} />
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
+  wrapper:        { flex: 1 },
   container:      { flex: 1, backgroundColor: '#F0E4C2' },
   scrollContent:  { paddingVertical: 24 },
   cityNode: {
@@ -186,4 +200,20 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3,
   },
   badgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
+  learnBtn: {
+    position: 'absolute', bottom: 32, alignSelf: 'center',
+    backgroundColor: '#634FCA',
+    paddingVertical: 14, paddingHorizontal: 36,
+    borderRadius: 30, borderBottomWidth: 4, borderColor: '#4A38A0',
+    shadowColor: '#634FCA', shadowOpacity: 0.4,
+    shadowRadius: 10, shadowOffset: { width: 0, height: 4 }, elevation: 8,
+  },
+  learnBtnText: { color: '#fff', fontSize: 17, fontWeight: '700', letterSpacing: 0.5 },
+  learnBadge: {
+    position: 'absolute', top: -6, right: -6,
+    backgroundColor: '#EF4444', borderRadius: 10,
+    minWidth: 20, height: 20,
+    alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4,
+  },
+  learnBadgeText: { color: '#fff', fontSize: 11, fontWeight: '700' },
 })
