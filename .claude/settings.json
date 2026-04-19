@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 60,
+            "statusMessage": "Creating PR...",
+            "command": "cd /Users/loic/Desktop/applicationLearn/my-app && if [ -n \"$(git status --porcelain)\" ]; then BRANCH=\"claude/changes-$(date +%Y%m%d-%H%M%S)\"; git checkout -b \"$BRANCH\" 2>/dev/null || true; git add -A; git commit -m \"Claude: auto changes $(date '+%Y-%m-%d %H:%M')\"; git push -u origin \"$BRANCH\" 2>/dev/null; PR_URL=$(gh pr create --title \"Claude changes $(date '+%Y-%m-%d %H:%M')\" --body \"Modifications automatiques par Claude - merci de reviewer avant de merger.\" 2>/dev/null); echo \"{\\\"systemMessage\\\": \\\"PR créée : $PR_URL\\\"}\"; else echo \"{\\\"systemMessage\\\": \\\"Aucun changement à committer.\\\"}\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
